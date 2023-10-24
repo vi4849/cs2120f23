@@ -51,7 +51,7 @@ natural number, *n'*.
 
 def apply_n {α : Type} : (α → α) → α → Nat → α  
 | f, a, 0 => a
-| f, a, (n' + 1) => f (apply_n f a n')
+| f, a, (n' + 1) => apply_n f (f a) n'
 
 -- Test cases: confirm that expectations are correct
 
@@ -163,7 +163,7 @@ be for your function to work in all cases.
 
 def reduce_and : List Bool → Bool
 | [] => true
-| h::t => and h (reduce_and t)
+| x::t => and x (reduce_and t)
 
 -- Test cases
 
@@ -186,7 +186,7 @@ should return [false, true].
 
 def map_not : List Bool → List Bool 
 | [] => []
-| h::t => not h :: map_not t   -- hint: use :: to construct answer
+| h::t => (not h)::(map_not t)   -- hint: use :: to construct answer
 
 -- test cases
 #eval map_not []              -- exect []
@@ -203,7 +203,7 @@ of all the natural numbers from *n* to *0*, inclusive.
 -- Your answer here
 def countdown : Nat → List Nat
 | 0 => [0]
-| n' + 1 => (n' + 1)::countdown n'
+| n'+1 => (n'+1)::(countdown n')
 
 
 -- test cases
@@ -219,14 +219,16 @@ denoted *++*. Write your own list append function. Call
 it *concat*. For any type *α*, it takes two arguments of 
 type *List α* and returns a result of type *List α,* the
 result of appending the second list to the first. Hint:
-do case analysis on the first argument.
+do case analysis on the first argument, and think about
+this function as an analog of natural number addition.
 -/
 
 -- Here
 
 def concat {α : Type} : List α → List α → List α 
 | [], m => m
-| h::t, m => h::concat t m
+| m, [] => m
+| x::t, m => x::(concat t m)
 
 -- Test cases
 
@@ -243,10 +245,11 @@ just that one element.
 -/
 
 -- Here
-def pure' : String → List String 
-| s => [s]
+def pure' {a: Type} : α → List α 
+| a => [a]
 
 #eval pure' "Hi"       -- expect ["Hi"]
+#reduce pure' "hi"
 
 /-!
 ### Challenge: List Reverse
@@ -258,14 +261,21 @@ list on the right. Instead, consider using *concat*.
 -/
 
 -- Answer here:
-
-def rev {α : Type}: List α → List α
+def list_rev' {α : Type} : List α → List α 
 | [] => []
-| h::t => t++[h]
+| h::t => concat (list_rev' t) [h]
 
-#eval rev [3,2,1]
+
+def list_rev {α : Type} : List α → List α 
+| [] => []
+| x::t => concat (list_rev t) [x]
+
+
+#eval list_rev' [3,2,1]
 
 
 /-!
-## End of Exam Practice Part 1
+## Part 2: Propositional Logic: Syntax and Semantics
+
+Forthcoming as an update to this file.
 -/

@@ -51,7 +51,7 @@ natural number, *n'*.
 
 def apply_n {α : Type} : (α → α) → α → Nat → α  
 | f, a, 0 => a
-| f, a, (n' + 1) => f (apply_n f a n')
+| f, a, (n' + 1) => (apply_n f (f a) n') 
 
 -- Test cases: confirm that expectations are correct
 
@@ -101,6 +101,7 @@ and destructuring lists.
 #check ([] : List Nat)
 #check 1::[2,3]
 #check [1,2,3]
+#check 1::2::[3]
 
 /-!
 You can use these notations when pattern 
@@ -186,7 +187,7 @@ should return [false, true].
 
 def map_not : List Bool → List Bool 
 | [] => []
-| h::t => not h :: map_not t   -- hint: use :: to construct answer
+| h::t => not h::(map_not t)   -- hint: use :: to construct answer
 
 -- test cases
 #eval map_not []              -- exect []
@@ -201,9 +202,9 @@ of all the natural numbers from *n* to *0*, inclusive.
 -/
 
 -- Your answer here
-def countdown : Nat → List Nat
+def countdown: Nat → List Nat
 | 0 => [0]
-| n' + 1 => (n' + 1)::countdown n'
+| n'+1 => (n'+1)::(countdown n')
 
 
 -- test cases
@@ -219,14 +220,14 @@ denoted *++*. Write your own list append function. Call
 it *concat*. For any type *α*, it takes two arguments of 
 type *List α* and returns a result of type *List α,* the
 result of appending the second list to the first. Hint:
-do case analysis on the first argument.
+do case analysis on the first argument, and think about
+this function as an analog of natural number addition.
 -/
 
 -- Here
-
 def concat {α : Type} : List α → List α → List α 
 | [], m => m
-| h::t, m => h::concat t m
+| h::t, m =>  h::(concat t m)
 
 -- Test cases
 
@@ -243,8 +244,8 @@ just that one element.
 -/
 
 -- Here
-def pure' : String → List String 
-| s => [s]
+def pure' {α : Type} : α → List α 
+| a => [a]
 
 #eval pure' "Hi"       -- expect ["Hi"]
 
@@ -258,14 +259,18 @@ list on the right. Instead, consider using *concat*.
 -/
 
 -- Answer here:
-
-def rev {α : Type}: List α → List α
+def list_rev {α : Type} : List α → List α 
 | [] => []
-| h::t => t++[h]
+| h::t => concat (list_rev t) (concat [] [h])
 
-#eval rev [3,2,1]
-
+#eval list_rev [1,2,3]
+#eval list_rev [3,2,1]
+#reduce list_rev (List.nil)
+#reduce list_rev (5::4::3::[])
+#reduce list_rev (List.cons 6 (List.cons 9 (List.cons 12 List.nil)))
 
 /-!
-## End of Exam Practice Part 1
+## Part 2: Propositional Logic: Syntax and Semantics
+
+Forthcoming as an update to this file.
 -/
